@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChainSafe.Gaming.Marketplac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChainSafe.Gaming.InProcessTransactionExecutor.Unity", "src\ChainSafe.Gaming.InProcessTransactionExecutor.Unity\ChainSafe.Gaming.InProcessTransactionExecutor.Unity.csproj", "{46C16E64-DC72-446D-B153-A2142691A151}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChainSafe.Gaming.AltLayer", "src/ChainSafe.Gaming.AltLayer\ChainSafe.Gaming.AltLayer.csproj", "{B1B38953-6467-47DB-A2BB-E96A72BD626D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,12 @@ Global
 		{46C16E64-DC72-446D-B153-A2142691A151}.Release|Any CPU.Build.0 = Release|Any CPU
 		{46C16E64-DC72-446D-B153-A2142691A151}.Test|Any CPU.ActiveCfg = Test|Any CPU
 		{46C16E64-DC72-446D-B153-A2142691A151}.Test|Any CPU.Build.0 = Test|Any CPU
+		{B1B38953-6467-47DB-A2BB-E96A72BD626D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1B38953-6467-47DB-A2BB-E96A72BD626D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1B38953-6467-47DB-A2BB-E96A72BD626D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1B38953-6467-47DB-A2BB-E96A72BD626D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1B38953-6467-47DB-A2BB-E96A72BD626D}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1B38953-6467-47DB-A2BB-E96A72BD626D}.Test|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
