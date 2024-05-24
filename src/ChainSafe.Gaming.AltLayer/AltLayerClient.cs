@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using ChainSafe.Gaming.Web3.Environment;
 using ChainSafe.Gaming.AltLayer.Types;
+using ChainSafe.Gaming.Web3.Environment;
+using Newtonsoft.Json;
 
 namespace ChainSafe.Gaming.AltLayer
 {
@@ -37,11 +37,11 @@ namespace ChainSafe.Gaming.AltLayer
                         TokenSymbol = _config.TokenSymbol,
                         BlockGasLimit = _config.BlockGasLimit,
                         TokenDecimals = _config.TokenDecimals,
-                        GenesisAccounts = _config.GenesisAccounts
+                        GenesisAccounts = _config.GenesisAccounts,
                     },
-                    Name = _config.Name
+                    Name = _config.Name,
                 },
-                FreeTrial = true
+                FreeTrial = true,
             };
 
             var requestBody = JsonConvert.SerializeObject(request);

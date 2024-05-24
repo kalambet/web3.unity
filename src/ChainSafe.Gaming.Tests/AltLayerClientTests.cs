@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using ChainSafe.Gaming.AltLayer;
 using ChainSafe.Gaming.AltLayer.Types;
+using ChainSafe.Gaming.Web3;
 using ChainSafe.Gaming.Web3.Environment;
 using Moq;
 using Newtonsoft.Json;

@@ -17,6 +17,7 @@
     <ProjectReference Include="..\ChainSafe.Gaming.NetCore\ChainSafe.Gaming.NetCore.csproj" />
     <ProjectReference Include="..\ChainSafe.Gaming.WalletConnect\ChainSafe.Gaming.WalletConnect.csproj" />
     <ProjectReference Include="..\ChainSafe.Gaming\ChainSafe.Gaming.csproj" />
+    <ProjectReference Include="..\ChainSafe.Gaming\ChainSafe.Gaming.Web3.csproj" />
     <ProjectReference Include="..\ChainSafe.Gaming.AltLayer\ChainSafe.Gaming.AltLayer.csproj" />
   </ItemGroup>
 
