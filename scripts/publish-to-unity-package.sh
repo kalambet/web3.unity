@@ -1,4 +1,4 @@
-#! /usr/bin/env sh
+#!/bin/bash
 set -e
 
 echo Building project...
@@ -16,7 +16,7 @@ dotnet restore
 
 echo Moving files to Unity package...
 
-export PUBLISH_PATH="bin/Release/netstandard2.1/publish"
+export PUBLISH_PATH="bin/release/netstandard2.1/publish"
 
 echo -e "DLLs Generated\n$(ls "$PUBLISH_PATH")"
 

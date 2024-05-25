@@ -4,16 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using ChainSafe.Gaming.Evm.Contracts;
 using ChainSafe.Gaming.Evm.Contracts.Extensions;
+using ChainSafe.Gaming.Evm.Providers;
 using ChainSafe.Gaming.Web3;
 using Nethereum.RPC.Eth.DTOs;
 using Newtonsoft.Json;
-using TransactionReceipt = ChainSafe.Gaming.Evm.Transactions.TransactionReceipt;
 
 namespace ChainSafe.Gaming.AltLayer.Contracts
 {
     public class SessionManager
     {
         private const string MethodStartSession = "startSession";
+        private const string MethodJoinSession = "joinSession";
         private const string SessionManagerAbi = @"[
             {
                 ""anonymous"": false,
@@ -41,6 +42,37 @@ namespace ChainSafe.Gaming.AltLayer.Contracts
                 ""type"": ""event""
             },
             {
+                ""anonymous"": false,
+                ""inputs"": [
+                    {
+                        ""indexed"": true,
+                        ""internalType"": ""uint256"",
+                        ""name"": ""id"",
+                        ""type"": ""uint256""
+                    },
+                    {
+                        ""indexed"": true,
+                        ""internalType"": ""address"",
+                        ""name"": ""miner"",
+                        ""type"": ""address""
+                    },
+                    {
+                        ""indexed"": true,
+                        ""internalType"": ""address"",
+                        ""name"": ""defender"",
+                        ""type"": ""address""
+                    },
+                    {
+                        ""indexed"": false,
+                        ""internalType"": ""string"",
+                        ""name"": ""rpcUrl"",
+                        ""type"": ""string""
+                    }
+                ],
+                ""name"": ""SessionJoined"",
+                ""type"": ""event""
+            },
+            {
                 ""inputs"": [
                     {
                         ""internalType"": ""address"",
@@ -57,16 +89,31 @@ namespace ChainSafe.Gaming.AltLayer.Contracts
                 ""outputs"": [],
                 ""stateMutability"": ""nonpayable"",
                 ""type"": ""function""
+            },
+            {
+                ""inputs"": [
+                    {
+                        ""internalType"": ""address"",
+                        ""name"": ""miner"",
+                        ""type"": ""address""
+                    }
+                ],
+                ""name"": ""joinSession"",
+                ""outputs"": [],
+                ""stateMutability"": ""nonpayable"",
+                ""type"": ""function""
             }
         ]";
 
         private readonly Contract contract;
         private readonly string address;
+        private readonly IRpcProvider rpcProvider;
 
-        public SessionManager(IContractBuilder cb, string contractAddress)
+        public SessionManager(IRpcProvider rpcProvider, IContractBuilder cb, string contractAddress)
         {
-            this.contract = cb.Build(SessionManagerAbi, address);
+            this.contract = cb.Build(SessionManagerAbi, contractAddress);
             this.address = contractAddress;
+            this.rpcProvider = rpcProvider;
         }
 
         public async Task<SessionStartedEventDTO> StartSessionAsync(string defender, string rpcUrl)
@@ -81,15 +128,26 @@ namespace ChainSafe.Gaming.AltLayer.Contracts
 
             if (!eventLogs.Any())
             {
-                throw new Web3Exception("No \"RewardsClaimed\" events were found in log's receipt.");
+                throw new Web3Exception("No \"SessionStarted\" events were found in log's receipt.");
             }
             return eventLogs.First().Event;
         }
 
-        public async Task<string> ListenForSessionAsync()
+        public async Task<SessionJoinedEventDTO> JoinSessionAsync(string miner)
         {
-            contract.GetEventLogs("SessionStarted");
-            return "";
+            var parameters = new object[] { miner };
+            var (_, receipt) = await contract.SendWithReceipt(MethodJoinSession, parameters);
+            var logs = receipt.Logs.Select(jToken => JsonConvert.DeserializeObject<FilterLog>(jToken.ToString()));
+            var eventAbi = EventExtensions.GetEventABI<SessionJoinedEventDTO>();
+            var eventLogs = logs
+                .Select(log => eventAbi.DecodeEvent<SessionJoinedEventDTO>(log))
+                .Where(l => l != null);
+
+            if (!eventLogs.Any())
+            {
+                throw new Web3Exception("No \"SessionJoined\" events were found in log's receipt.");
+            }
+            return eventLogs.First().Event;
         }
     }
 }
