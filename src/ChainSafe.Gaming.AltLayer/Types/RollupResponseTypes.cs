@@ -8,10 +8,13 @@ namespace ChainSafe.Gaming.AltLayer.Types
     public class RollupResponse
     {
         [JsonProperty(PropertyName = "flashlayer")]
-        public Flashlayer Flashlayer { get; set; }
+        public FlashlayerConfiguration Flashlayer { get; set; }
     }
 
-    public class Flashlayer
+    /// <summary>
+    /// Flashlayer details in the response.
+    /// </summary>
+    public class FlashlayerConfiguration
     {
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
@@ -20,7 +23,7 @@ namespace ChainSafe.Gaming.AltLayer.Types
         public string Status { get; set; }
 
         [JsonProperty(PropertyName = "settings")]
-        public Settings Settings { get; set; }
+        public FlashlayerSettings Settings { get; set; }
 
         [JsonProperty(PropertyName = "resources")]
         public Resources Resources { get; set; }
@@ -35,30 +38,9 @@ namespace ChainSafe.Gaming.AltLayer.Types
         public string Tier { get; set; }
     }
 
-    public class Settings
-    {
-        [JsonProperty(PropertyName = "fcfs")]
-        public bool Fcfs { get; set; }
-
-        [JsonProperty(PropertyName = "gasless")]
-        public bool Gasless { get; set; }
-
-        [JsonProperty(PropertyName = "blockTime")]
-        public string BlockTime { get; set; }
-
-        [JsonProperty(PropertyName = "tokenSymbol")]
-        public string TokenSymbol { get; set; }
-
-        [JsonProperty(PropertyName = "blockGasLimit")]
-        public string BlockGasLimit { get; set; }
-
-        [JsonProperty(PropertyName = "tokenDecimals")]
-        public string TokenDecimals { get; set; }
-
-        [JsonProperty(PropertyName = "genesisAccounts")]
-        public GenesisAccount[] GenesisAccounts { get; set; }
-    }
-
+    /// <summary>
+    /// Resources provided in the response.
+    /// </summary>
     public class Resources
     {
         [JsonProperty(PropertyName = "rpc")]

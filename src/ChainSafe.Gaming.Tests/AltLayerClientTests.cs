@@ -18,18 +18,25 @@ public class AltLayerClientTests
         mockHttpClient = new Mock<IHttpClient>();
         config = new AltLayerConfig
         {
-            BlockTime = "0.5",
-            Gasless = true,
-            Fcfs = true,
-            TokenSymbol = "ETH",
-            BlockGasLimit = "70000000",
-            TokenDecimals = "18",
-            GenesisAccounts = new[]
+            Flashlayer = new Flashlayer
             {
-                new GenesisAccount { Account = "0x55085B2Fd83323d98d30d6B3342cc39de6D527f8", Balance = "21000000000000000000000000" },
-                new GenesisAccount { Account = "0x9434e7d062bF1257BF726a96A83fAE177703ccFD", Balance = "21000000000000000000000000" },
+                Name = "freetrial",
+                Settings = new FlashlayerSettings
+                {
+                    BlockTime = "0.5",
+                    Gasless = true,
+                    Fcfs = true,
+                    TokenSymbol = "ETH",
+                    BlockGasLimit = "70000000",
+                    TokenDecimals = "18",
+                    GenesisAccounts = new[]
+                    {
+                        new GenesisAccount { Account = "0x55085B2Fd83323d98d30d6B3342cc39de6D527f8", Balance = "21000000000000000000000000" },
+                        new GenesisAccount { Account = "0x9434e7d062bF1257BF726a96A83fAE177703ccFD", Balance = "21000000000000000000000000" },
+                    },
+                },
             },
-            Name = "freetrial",
+            FreeTrial = true,
         };
         altLayerClient = new AltLayerClient(mockHttpClient.Object, config);
     }
@@ -41,7 +48,7 @@ public class AltLayerClientTests
         var expectedRpcEndpoint = "https://flashlayer.alt.technology/freetrial";
         var rollupResponse = new RollupResponse
         {
-            Flashlayer = new Flashlayer
+            Flashlayer = new FlashlayerConfiguration
             {
                 Resources = new Resources
                 {
