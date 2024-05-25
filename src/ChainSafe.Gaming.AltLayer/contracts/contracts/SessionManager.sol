@@ -21,6 +21,10 @@ contract SessionManager {
     // Mapping to store sessions with a unique ID
     mapping(uint256 => Session) public sessions;
 
+    function getSessionInfo(uint256 _sid) public view returns (Session memory) {
+        return sessions[_sid];
+    }
+
     // Counter for session IDs
     uint256 public sessionCounter;
 

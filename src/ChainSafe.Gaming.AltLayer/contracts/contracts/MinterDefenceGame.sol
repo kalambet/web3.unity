@@ -2,6 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "./SessionManager.sol";
 
 contract MinerDefenceGame is ERC1155 {
     using Arrays for uint256[];
@@ -23,7 +24,7 @@ contract MinerDefenceGame is ERC1155 {
     );
 
     constructor(address sessionManager) ERC1155("") {
-        _sessionManager = sessionManager;
+        _sessionManager = SessionManager(sessionManager);
     }
 
     // Mapping from session id => submitter view of a rollup => on what address => token ids => balancaes
@@ -36,12 +37,12 @@ contract MinerDefenceGame is ERC1155 {
         uint256[] memory values) public {
 
             address sender = _msgSender();
-            Session s = _sessionManager.sessions[sessionId];
-            if (s.minter == address(0) || s.defender == address(0)) {
+            SessionManager.Session memory s = _sessionManager.getSessionInfo(sessionId);
+            if (s.miner == address(0) || s.defender == address(0)) {
                 revert InvalidSession(sessionId);
             }
 
-            if (s.minter != sender && s.defender != sender) {
+            if (s.miner != sender && s.defender != sender) {
                 revert UnauthorizedSubmit(sender);
             }
 
@@ -55,7 +56,7 @@ contract MinerDefenceGame is ERC1155 {
             emit RollupStateSubmit(sessionId, sender, player, ids, values);
     }
 
-    function claim(uint256 sessionId, address player, uint256[] memory ids) public {
+    function claim(uint256 sessionId, address player, uint256[] memory ids, bytes memory data) public {
         address sender = _msgSender();
 
         if (player == address(0)) {
@@ -64,10 +65,9 @@ contract MinerDefenceGame is ERC1155 {
 
         for (uint256 i = 0; i <= ids.length; ++i) {
                 uint256 id = ids.unsafeMemoryAccess(i);
-                uint256 value = values.unsafeMemoryAccess(i);
 
                 if (_settelemntView[sessionId][sender][player][id] == _settelemntView[sessionId][player][sender][id]) {
-                    _update(address(0), sender, id, value);
+                    _mint(sender, id, _settelemntView[sessionId][sender][player][id], data);
                 }
         }
     }
