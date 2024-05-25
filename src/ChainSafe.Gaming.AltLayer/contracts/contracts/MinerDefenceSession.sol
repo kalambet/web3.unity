@@ -56,7 +56,7 @@ contract MinerDefenceSession is ERC1155 {
         _safeBatchTransferFrom(from_miner, to_defender, ids, values, data);
     }
 
-    function mint(address to_miner, uint256 id, uint256 value, bytes memory data) stillActive onlyMiner public {
+    function mine(address to_miner, uint256 id, uint256 value, bytes memory data) stillActive onlyMiner public {
         _mint(to_miner, id, value, data);  
     }
 
