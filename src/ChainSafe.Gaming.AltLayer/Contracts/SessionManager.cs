@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ChainSafe.Gaming.Evm.Contracts;
 using ChainSafe.Gaming.Evm.Contracts.Extensions;
+using ChainSafe.Gaming.Evm.Providers;
 using ChainSafe.Gaming.Web3;
 using Nethereum.RPC.Eth.DTOs;
 using Newtonsoft.Json;
@@ -62,11 +63,13 @@ namespace ChainSafe.Gaming.AltLayer.Contracts
 
         private readonly Contract contract;
         private readonly string address;
+        private readonly IRpcProvider rpcProvider;
 
-        public SessionManager(IContractBuilder cb, string contractAddress)
+        public SessionManager(IRpcProvider rpcProvider, IContractBuilder cb, string contractAddress)
         {
             this.contract = cb.Build(SessionManagerAbi, address);
             this.address = contractAddress;
+            this.rpcProvider = rpcProvider;
         }
 
         public async Task<SessionStartedEventDTO> StartSessionAsync(string defender, string rpcUrl)
@@ -88,7 +91,9 @@ namespace ChainSafe.Gaming.AltLayer.Contracts
 
         public async Task<string> ListenForSessionAsync()
         {
-            contract.GetEventLogs("SessionStarted");
+            var latestBlock = await rpcProvider.GetBlock();
+            latestBlock.Number
+            var logs = contract.GetEventLogs("SessionStarted");
             return "";
         }
     }
