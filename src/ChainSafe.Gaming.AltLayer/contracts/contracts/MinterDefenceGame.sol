@@ -8,7 +8,19 @@ contract MinerDefenceGame is ERC1155 {
     using Arrays for address[];
 
     // SessionManager Contract
-    address private _sessionManager;
+    SessionManager private _sessionManager;
+
+    error InvalidSession(uint256);
+    error UnauthorizedSubmit(address sender);
+    error IllegalClaim(address sender);
+
+    event RollupStateSubmit(
+        uint256 indexed sessionId,
+        address indexed player,
+        address indexed from,
+        uint256[] ids,
+        uint256[] values
+    );
 
     constructor(address sessionManager) ERC1155("") {
         _sessionManager = sessionManager;
@@ -23,5 +35,40 @@ contract MinerDefenceGame is ERC1155 {
         uint256[] memory ids, 
         uint256[] memory values) public {
 
+            address sender = _msgSender();
+            Session s = _sessionManager.sessions[sessionId];
+            if (s.minter == address(0) || s.defender == address(0)) {
+                revert InvalidSession(sessionId);
+            }
+
+            if (s.minter != sender && s.defender != sender) {
+                revert UnauthorizedSubmit(sender);
+            }
+
+            for (uint256 i = 0; i <= ids.length; ++i) {
+                uint256 id = ids.unsafeMemoryAccess(i);
+                uint256 value = values.unsafeMemoryAccess(i);
+
+                _settelemntView[sessionId][sender][player][id] = value;
+            }
+
+            emit RollupStateSubmit(sessionId, sender, player, ids, values);
+    }
+
+    function claim(uint256 sessionId, address player, uint256[] memory ids) public {
+        address sender = _msgSender();
+
+        if (player == address(0)) {
+            revert IllegalClaim(sender);
+        }
+
+        for (uint256 i = 0; i <= ids.length; ++i) {
+                uint256 id = ids.unsafeMemoryAccess(i);
+                uint256 value = values.unsafeMemoryAccess(i);
+
+                if (_settelemntView[sessionId][sender][player][id] == _settelemntView[sessionId][player][sender][id]) {
+                    _update(address(0), sender, id, value);
+                }
+        }
     }
 }
