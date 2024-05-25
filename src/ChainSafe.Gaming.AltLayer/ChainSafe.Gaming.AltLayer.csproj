@@ -10,4 +10,8 @@
         <ProjectReference Include="..\ChainSafe.Gaming\ChainSafe.Gaming.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="contracts\" />
+    </ItemGroup>
+
 </Project>
