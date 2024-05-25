@@ -12,17 +12,17 @@ describe("Lock", function () {
         // const ids = [1, 2, 3, 4];
         // const values= [100, 200, 300, 400];
 
-        const MinterDefenderSession = await ethers.getContractFactory("MinterDefenderSession");
-        const mfs = await MinterDefenderSession.deploy();
+        const MinerDefenceSession = await ethers.getContractFactory("MinerDefenceSession");
+        const mfs = await MinerDefenceSession.deploy();
 
         return { mfs, minter, defender };
     }
 
     describe("Deployment", function () {
     it("Should set the right players", async function () {
-        const { mfs, minter, defender } = await loadFixture(deployOneYearLockFixture);
+        const { mfs, minter, defender } = await loadFixture(deployBasicGameSession);
 
-        expect(await mfs.minter()).to.equal(minter);
+        expect(await mfs.minter()).equal(minter);
     });
 
     // it("Should set the right owner", async function () {
