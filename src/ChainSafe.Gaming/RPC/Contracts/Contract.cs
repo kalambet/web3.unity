@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChainSafe.Gaming.Evm.Providers;
@@ -11,20 +12,20 @@ using Nethereum.Hex.HexTypes;
 namespace ChainSafe.Gaming.Evm.Contracts
 {
     /// <summary>
-    /// Representation of a contract.
+    ///     Representation of a contract.
     /// </summary>
     public class Contract
     {
         private readonly string abi;
         private readonly string address;
+        private readonly IAnalyticsClient analyticsClient;
+        private readonly Builders.ContractBuilder contractBuilder;
         private readonly IRpcProvider provider;
         private readonly ISigner signer;
-        private readonly Builders.ContractBuilder contractBuilder;
         private readonly ITransactionExecutor transactionExecutor;
-        private readonly IAnalyticsClient analyticsClient;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Contract"/> class.
+        ///     Initializes a new instance of the <see cref="Contract" /> class.
         /// </summary>
         /// <param name="abi">The abi.</param>
         /// <param name="address">The contract address.</param>
@@ -48,9 +49,9 @@ namespace ChainSafe.Gaming.Evm.Contracts
         }
 
         /// <summary>
-        /// Returns a new instance of the Contract attached to a new address. This is useful
-        /// if there are multiple similar or identical copies of a Contract on the network
-        /// and you wish to interact with each of them.
+        ///     Returns a new instance of the Contract attached to a new address. This is useful
+        ///     if there are multiple similar or identical copies of a Contract on the network
+        ///     and you wish to interact with each of them.
         /// </summary>
         /// <param name="address">Address of the contract to attach to.</param>
         /// <returns>The new contract.</returns>
@@ -65,7 +66,7 @@ namespace ChainSafe.Gaming.Evm.Contracts
         }
 
         /// <summary>
-        /// Call the contract method.
+        ///     Call the contract method.
         /// </summary>
         /// <param name="method">The method to call.</param>
         /// <param name="parameters">The parameters for the method.</param>
@@ -102,7 +103,7 @@ namespace ChainSafe.Gaming.Evm.Contracts
         }
 
         /// <summary>
-        /// Decodes a result.
+        ///     Decodes a result.
         /// </summary>
         /// <param name="method">The method.</param>
         /// <param name="output">The raw output data from an executed function call.</param>
@@ -121,7 +122,7 @@ namespace ChainSafe.Gaming.Evm.Contracts
         }
 
         /// <summary>
-        /// Sends the transaction.
+        ///     Sends the transaction.
         /// </summary>
         /// <param name="method">The method.</param>
         /// <param name="parameters">The parameters.</param>
@@ -133,7 +134,7 @@ namespace ChainSafe.Gaming.Evm.Contracts
         }
 
         /// <summary>
-        /// Sends the transaction.
+        ///     Sends the transaction.
         /// </summary>
         /// <param name="method">The method.</param>
         /// <param name="parameters">The parameters.</param>
@@ -180,7 +181,7 @@ namespace ChainSafe.Gaming.Evm.Contracts
         }
 
         /// <summary>
-        /// Estimate gas.
+        ///     Estimate gas.
         /// </summary>
         /// <param name="method">The method.</param>
         /// <param name="parameters">The parameters.</param>
@@ -205,7 +206,7 @@ namespace ChainSafe.Gaming.Evm.Contracts
         }
 
         /// <summary>
-        /// Create contract call data.
+        ///     Create contract call data.
         /// </summary>
         /// <param name="method">The method.</param>
         /// <param name="parameters">The parameters.</param>
@@ -221,7 +222,8 @@ namespace ChainSafe.Gaming.Evm.Contracts
                 Client = "Desktop/Mobile",
                 Version = "v2",
                 ProjectID = PlayerPrefs.GetString("ProjectID"),
-                Player = Web3Wallet.Web3Wallet.Sha3(PlayerPrefs.GetString("Account") + PlayerPrefs.GetString("ProjectID")),
+                Player =
+ Web3Wallet.Web3Wallet.Sha3(PlayerPrefs.GetString("Account") + PlayerPrefs.GetString("ProjectID")),
                 Method = method,
                 Params = parameters
             };
@@ -233,7 +235,8 @@ namespace ChainSafe.Gaming.Evm.Contracts
                 Client = "WebGL",
                 Version = "v2",
                 ProjectID = PlayerPrefs.GetString("ProjectID"),
-                Player = Web3Wallet.Web3Wallet.Sha3(PlayerPrefs.GetString("Account") + PlayerPrefs.GetString("ProjectID")),
+                Player =
+ Web3Wallet.Web3Wallet.Sha3(PlayerPrefs.GetString("Account") + PlayerPrefs.GetString("ProjectID")),
                 Method = method,
                 Params = parameters
             };
@@ -241,7 +244,7 @@ namespace ChainSafe.Gaming.Evm.Contracts
 #endif
             var function = contractBuilder.GetFunctionBuilder(method);
 
-            analyticsClient.CaptureEvent(new AnalyticsEvent()
+            analyticsClient.CaptureEvent(new AnalyticsEvent
             {
                 ChainId = analyticsClient.ChainConfig.ChainId,
                 EventName = method,
@@ -282,5 +285,44 @@ namespace ChainSafe.Gaming.Evm.Contracts
 
             return txReq;
         }
+
+        public async Task<List<EventLog>> GetEventLogs(string eventName, string fromBlock = "earliest", string toBlock = "latest")
+        {
+            var eventABI = contractBuilder.GetEventAbi(eventName);
+            var eventTopic = eventABI.Sha3Signature;
+
+            var filterInput = new
+            {
+                fromBlock,
+                toBlock,
+                address,
+                topics = new[] { eventTopic },
+            };
+
+            var logs = await provider.Perform<List<EventLog>>("eth_getLogs", filterInput);
+
+            return logs;
+        }
+    }
+
+    public class EventLog
+    {
+        public string Address { get; set; }
+
+        public string[] Topics { get; set; }
+
+        public string Data { get; set; }
+
+        public string BlockNumber { get; set; }
+
+        public string TransactionHash { get; set; }
+
+        public string TransactionIndex { get; set; }
+
+        public string BlockHash { get; set; }
+
+        public string LogIndex { get; set; }
+
+        public bool Removed { get; set; }
     }
 }
