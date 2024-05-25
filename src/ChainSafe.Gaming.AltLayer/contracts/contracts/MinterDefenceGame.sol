@@ -8,7 +8,10 @@ contract MinerDefenceGame is ERC1155 {
     using Arrays for address[];
 
     // SessionManager Contract
-    address private _sessionManager;
+    SessionManager private _sessionManager;
+
+    error InvalidSession(uint256);
+    error UnauthorizedSubmit(address sender);
 
     constructor(address sessionManager) ERC1155("") {
         _sessionManager = sessionManager;
@@ -22,6 +25,18 @@ contract MinerDefenceGame is ERC1155 {
         address player, 
         uint256[] memory ids, 
         uint256[] memory values) public {
+
+            address sender = _msgSender();
+            Session s = _sessionManager.sessions[sessionId];
+            if (s.minter == address(0) || s.defender == address(0)) {
+                revert InvalidSession(sessionId);
+            }
+
+            if (s.minter != sender && s.defender != sender) {
+                revert UnauthorizedSubmit(sender);
+            }
+
+            _settelemntView[sessionId][sender][player]
 
     }
 }
