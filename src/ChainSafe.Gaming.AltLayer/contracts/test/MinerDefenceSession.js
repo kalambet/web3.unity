@@ -4,7 +4,6 @@ const {
   } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
   const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
   const { expect } = require("chai");
-  //const { ethers } = require('hardhat');
   
   describe("MinerDefenceSession", function () {
       async function deployBasicGameSession() {
@@ -16,11 +15,11 @@ const {
       }
   
       describe("Deployment", function () {
-      it("Should set the right players", async function () {
-          const { mfs, miner, defender } = await loadFixture(deployBasicGameSession);
-  
-          expect(await mfs.miner()).to.equal(miner);
-          expect(await mfs.defender()).to.equal(defender);
+        it("Should set the right players", async function () {
+            const { mfs, miner, defender } = await loadFixture(deployBasicGameSession);
+    
+            expect(await mfs.miner()).to.equal(miner);
+            expect(await mfs.defender()).to.equal(defender);
       });
   
       describe("Mining", function () {

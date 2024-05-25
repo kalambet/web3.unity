@@ -71,7 +71,7 @@ contract MinerDefenceSession is ERC1155 {
         uint256[] memory ids,
         uint256[] memory values,
         bytes memory data) stillActive onlyMiner public {
-        for (uint256 i = 0; i <= ids.length; ++i) {
+        for (uint256 i = 0; i < ids.length; i++) {
             uint256 id = ids.unsafeMemoryAccess(i);
             uint256 value = values.unsafeMemoryAccess(i);
             
